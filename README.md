@@ -1,11 +1,10 @@
 
 
 
-[![Build Status](https://app.travis-ci.com/FlorianTousch/EssentialFeed.svg?branch=main)](https://app.travis-ci.com/FlorianTousch/EssentialFeed)
 
 # Essential Feed App – Image Feed Feature
 
-[![Build Status](https://travis-ci.com/essentialdevelopercom/essential-feed-case-study.svg?branch=master)](https://travis-ci.com/essentialdevelopercom/essential-feed-case-study)
+[![Build Status](https://app.travis-ci.com/FlorianTousch/EssentialFeed.svg?branch=main)](https://app.travis-ci.com/FlorianTousch/EssentialFeed)
 
 ## BDD Specs
 
