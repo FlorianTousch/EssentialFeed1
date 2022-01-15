@@ -58,7 +58,7 @@ class CodableFeedStoreTests: XCTestCase {
         let storeURL = testSpecificStoreURL()
         let sut = makeSUT(storeURL: storeURL)
         
-        try! "invalid data".write(to: testSpecificStoreURL(), atomically: false, encoding: .utf8)
+        writeInvalidData()
         
         expect(sut, toRetrieve: .failure(anyNSError()))
     }
@@ -67,7 +67,7 @@ class CodableFeedStoreTests: XCTestCase {
         let storeURL = testSpecificStoreURL()
         let sut = makeSUT(storeURL: storeURL)
         
-        try! "invalid data".write(to: testSpecificStoreURL(), atomically: false, encoding: .utf8)
+        writeInvalidData()
         
         expect(sut, toRetrieveTwice: .failure(anyNSError()))
     }
@@ -201,5 +201,9 @@ class CodableFeedStoreTests: XCTestCase {
     
     private func deleteStoreArtifacts() {
         try? FileManager.default.removeItem(at: testSpecificStoreURL())
+    }
+    
+    private func writeInvalidData() {
+        try! "invalid data".write(to: testSpecificStoreURL(), atomically: false, encoding: .utf8)
     }
 }
