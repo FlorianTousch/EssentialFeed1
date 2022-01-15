@@ -51,7 +51,7 @@ class CodableFeedStore {
         let cache = try! decoder.decode(Cache.self, from: data)
         completion(.found(feed: cache.localFeed, timestamp: cache.timestamp))
     }
-
+    
     func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping FeedStore.InsertionCompletion) {
         let encoder = JSONEncoder()
         let cache = Cache(feed: feed.map(CodableFeedImage.init), timestamp: timestamp)
@@ -129,6 +129,35 @@ class CodableFeedStoreTests: XCTestCase {
                     XCTFail("Expected found result with feed \(feed) and timestamp \(timestamp) got \(retrieveResult) intead")
                 }
                 exp.fulfill()
+            }
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
+        let sut = makeSUT()
+        let feed = uniqueImageFeed().local
+        let timestamp = Date()
+        let exp = expectation(description: "Wait for cache retrieval")
+        
+        sut.insert(feed, timestamp: timestamp) { insertionError in
+            XCTAssertNil(insertionError, "Expected feed to be inserted successfully")
+            sut.retrieve { firstResult in
+                sut.retrieve { secondResult in
+                    switch (firstResult, secondResult) {
+                    case let (.found(firstFound), .found(secondFound)):
+                        XCTAssertEqual(firstFound.feed, feed)
+                        XCTAssertEqual(firstFound.timestamp, timestamp)
+                        
+                        XCTAssertEqual(secondFound.feed, feed)
+                        XCTAssertEqual(secondFound.timestamp, timestamp)
+                        
+                    default:
+                        XCTFail("Expected retrieve twice from non empty cacheto deliver same found result with feed \(feed) and timestamp \(timestamp), got \(firstResult) and  \(secondResult) instead")
+                    }
+                    exp.fulfill()
+                }
             }
         }
         
